@@ -1,11 +1,21 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'node18'
+    }
+
     stages {
 
         stage('Checkout') {
             steps {
                 echo 'Checking Source Code'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'SonarQube Scan Stage'
             }
         }
 
