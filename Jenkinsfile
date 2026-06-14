@@ -1,8 +1,13 @@
+
 pipeline {
     agent any
 
     tools {
         nodejs 'node18'
+    }
+
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'
     }
 
     stages {
@@ -15,7 +20,14 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                echo 'SonarQube Scan Stage'
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                    $SCANNER_HOME/bin/sonar-scanner \
+                    -Dsonar.projectName=Netflix-Clone \
+                    -Dsonar.projectKey=netflix-clone \
+                    -Dsonar.sources=.
+                    '''
+                }
             }
         }
 
