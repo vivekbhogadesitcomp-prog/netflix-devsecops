@@ -9,6 +9,14 @@ pipeline {
         SCANNER_HOME = tool 'sonar-scanner'
     }
 
+stage('OWASP Dependency Check') {
+    steps {
+        dependencyCheck additionalArguments: '--scan .',
+                        odcInstallation: 'dependency-check'
+        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+    }
+}	
+
     stages {
 
         stage('Install Dependencies') {
