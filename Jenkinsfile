@@ -18,13 +18,18 @@ pipeline {
             }
         }
 
-	catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-    dependencyCheck(
-        additionalArguments: '--scan .',
-        odcInstallation: 'dependency-check'
-    )
-}
-}
+        stage('OWASP Dependency Check') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    dependencyCheck(
+                        additionalArguments: '--scan . --noupdate',
+                        odcInstallation: 'dependency-check'
+                    )
+                }
+
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
 
         stage('SonarQube Analysis') {
             steps {
@@ -70,6 +75,24 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+
+        unstable {
+            echo 'OWASP scan had issues, but pipeline continued.'
+        }
+
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
