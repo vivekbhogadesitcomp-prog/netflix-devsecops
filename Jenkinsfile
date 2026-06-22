@@ -18,6 +18,15 @@ pipeline {
             }
         }
 
+	stage('OWASP Dependency Check') {
+    steps {
+        dependencyCheck additionalArguments: '--scan .',
+                        odcInstallation: 'dependency-check'
+
+        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+    }
+}
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
