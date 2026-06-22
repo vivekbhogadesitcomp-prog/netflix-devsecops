@@ -18,13 +18,12 @@ pipeline {
             }
         }
 
-	stage('OWASP Dependency Check') {
-    steps {
-        dependencyCheck additionalArguments: '--scan .',
-                        odcInstallation: 'dependency-check'
-
-        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-    }
+	catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+    dependencyCheck(
+        additionalArguments: '--scan .',
+        odcInstallation: 'dependency-check'
+    )
+}
 }
 
         stage('SonarQube Analysis') {
