@@ -81,6 +81,22 @@ pipeline {
             }
         }
 
+	stage('Kubernetes Test') {
+    steps {
+        withCredentials([
+            file(
+                credentialsId: 'kubeconfig',
+                variable: 'KUBECONFIG'
+            )
+        ]) {
+            sh '''
+            kubectl config current-context
+            kubectl get nodes
+            '''
+        }
+    }
+}
+
         stage('Email Test') {
             steps {
                 mail(
