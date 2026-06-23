@@ -27,7 +27,9 @@ pipeline {
                     )
                 }
 
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                dependencyCheckPublisher(
+                    pattern: '**/dependency-check-report.xml'
+                )
             }
         }
 
@@ -64,11 +66,13 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
                     sh '''
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     docker push $IMAGE_NAME
@@ -77,55 +81,58 @@ pipeline {
             }
         }
     }
-	
 
+    post {
 
-post {
+        success {
+            emailext(
+                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+Build Success!
 
-    success {
-        emailext(
-            subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            body: """
-            Build Success!
+Job Name: ${env.JOB_NAME}
+Build Number: ${env.BUILD_NUMBER}
 
-            Job: ${env.JOB_NAME}
-            Build Number: ${env.BUILD_NUMBER}
-            URL: ${env.BUILD_URL}
-            """,
-            to: "vivekbhogade.sit.comp@gmail.com"
-        )
-    }
+Build URL:
+${env.BUILD_URL}
+""",
+                to: 'vivekbhogade.sit.comp@gmail.com',
+                mimeType: 'text/plain'
+            )
+        }
 
-    failure {
-        emailext(
-            subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            body: """
-            Build Failed!
+        unstable {
+            emailext(
+                subject: "UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+Build Unstable
 
-            Job: ${env.JOB_NAME}
-            Build Number: ${env.BUILD_NUMBER}
-            URL: ${env.BUILD_URL}
+Job Name: ${env.JOB_NAME}
+Build Number: ${env.BUILD_NUMBER}
 
-            Check Jenkins console output.
-            """,
-            to: "vivekbhogade.sit.comp@gmail.com"
-        )
-    }
+Check:
+${env.BUILD_URL}
+""",
+                to: 'vivekbhogade.sit.comp@gmail.com',
+                mimeType: 'text/plain'
+            )
+        }
 
-    unstable {
-        emailext(
-            subject: "UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            body: """
-            Build Unstable.
+        failure {
+            emailext(
+                subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+Build Failed
 
-            Job: ${env.JOB_NAME}
-            Build Number: ${env.BUILD_NUMBER}
-            URL: ${env.BUILD_URL}
-            """,
-            to: "vivekbhogade.sit.comp@gmail.com"
-        )
+Job Name: ${env.JOB_NAME}
+Build Number: ${env.BUILD_NUMBER}
+
+Check Console:
+${env.BUILD_URL}
+""",
+                to: 'vivekbhogade.sit.comp@gmail.com',
+                mimeType: 'text/plain'
+            )
+        }
     }
 }
-
-}
-
