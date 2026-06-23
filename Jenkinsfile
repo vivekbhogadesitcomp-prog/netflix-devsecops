@@ -77,22 +77,55 @@ pipeline {
             }
         }
     }
+	
 
-    post {
-        always {
-            echo 'Pipeline completed.'
-        }
 
-        success {
-            echo 'Pipeline executed successfully!'
-        }
+post {
 
-        unstable {
-            echo 'OWASP scan had issues, but pipeline continued.'
-        }
+    success {
+        emailext(
+            subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+            Build Success!
 
-        failure {
-            echo 'Pipeline failed.'
-        }
+            Job: ${env.JOB_NAME}
+            Build Number: ${env.BUILD_NUMBER}
+            URL: ${env.BUILD_URL}
+            """,
+            to: "your-email@gmail.com"
+        )
+    }
+
+    failure {
+        emailext(
+            subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+            Build Failed!
+
+            Job: ${env.JOB_NAME}
+            Build Number: ${env.BUILD_NUMBER}
+            URL: ${env.BUILD_URL}
+
+            Check Jenkins console output.
+            """,
+            to: "your-email@gmail.com"
+        )
+    }
+
+    unstable {
+        emailext(
+            subject: "UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+            Build Unstable.
+
+            Job: ${env.JOB_NAME}
+            Build Number: ${env.BUILD_NUMBER}
+            URL: ${env.BUILD_URL}
+            """,
+            to: "your-email@gmail.com"
+        )
     }
 }
+
+}
+
