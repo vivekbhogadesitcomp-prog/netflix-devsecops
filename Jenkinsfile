@@ -82,18 +82,20 @@ pipeline {
         }
 
         stage('Email Test') {
-    steps {
-        mail(
-            to: 'vivekbhogade.sit.comp@gmail.com',
-            subject: 'Pipeline Email Test',
-            body: 'Email sent successfully from Jenkins pipeline'
-        )
+            steps {
+                mail(
+                    to: 'vivekbhogade.sit.comp@gmail.com',
+                    subject: 'Pipeline Email Test',
+                    body: 'Email sent successfully from Jenkins pipeline'
+                )
+            }
+        }
     }
-}
+
     post {
 
         success {
-            emailext(
+            mail(
                 to: 'vivekbhogade.sit.comp@gmail.com',
                 subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
@@ -109,7 +111,7 @@ ${env.BUILD_URL}
         }
 
         unstable {
-            emailext(
+            mail(
                 to: 'vivekbhogade.sit.comp@gmail.com',
                 subject: "UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
@@ -125,7 +127,7 @@ ${env.BUILD_URL}
         }
 
         failure {
-            emailext(
+            mail(
                 to: 'vivekbhogade.sit.comp@gmail.com',
                 subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
