@@ -92,7 +92,7 @@ post {
             Build Number: ${env.BUILD_NUMBER}
             URL: ${env.BUILD_URL}
             """,
-            to: "your-email@gmail.com"
+            to: "vivekbhogade.sit.comp@gmail.com"
         )
     }
 
@@ -108,7 +108,7 @@ post {
 
             Check Jenkins console output.
             """,
-            to: "your-email@gmail.com"
+            to: "vivekbhogade.sit.comp@gmail.com"
         )
     }
 
@@ -122,7 +122,7 @@ post {
             Build Number: ${env.BUILD_NUMBER}
             URL: ${env.BUILD_URL}
             """,
-            to: "your-email@gmail.com"
+            to: "vivekbhogade.sit.comp@gmail.com"
         )
     }
 }
