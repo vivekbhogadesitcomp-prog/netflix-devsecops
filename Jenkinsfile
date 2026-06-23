@@ -82,16 +82,14 @@ pipeline {
         }
 
         stage('Email Test') {
-            steps {
-                emailext(
-                    to: 'vivekbhogade.sit.comp@gmail.com',
-                    subject: 'Pipeline Email Test',
-                    body: 'If you received this email, Jenkins pipeline email notifications are working.'
-                )
-            }
-        }
+    steps {
+        mail(
+            to: 'vivekbhogade.sit.comp@gmail.com',
+            subject: 'Pipeline Email Test',
+            body: 'Email sent successfully from Jenkins pipeline'
+        )
     }
-
+}
     post {
 
         success {
