@@ -80,29 +80,39 @@ pipeline {
                 }
             }
         }
+
+        stage('Email Test') {
+            steps {
+                emailext(
+                    to: 'vivekbhogade.sit.comp@gmail.com',
+                    subject: 'Pipeline Email Test',
+                    body: 'If you received this email, Jenkins pipeline email notifications are working.'
+                )
+            }
+        }
     }
 
     post {
 
         success {
             emailext(
+                to: 'vivekbhogade.sit.comp@gmail.com',
                 subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
-Build Success!
+Build Successful
 
 Job Name: ${env.JOB_NAME}
 Build Number: ${env.BUILD_NUMBER}
 
 Build URL:
 ${env.BUILD_URL}
-""",
-                to: 'vivekbhogade.sit.comp@gmail.com',
-                mimeType: 'text/plain'
+"""
             )
         }
 
         unstable {
             emailext(
+                to: 'vivekbhogade.sit.comp@gmail.com',
                 subject: "UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
 Build Unstable
@@ -110,16 +120,15 @@ Build Unstable
 Job Name: ${env.JOB_NAME}
 Build Number: ${env.BUILD_NUMBER}
 
-Check:
+Build URL:
 ${env.BUILD_URL}
-""",
-                to: 'vivekbhogade.sit.comp@gmail.com',
-                mimeType: 'text/plain'
+"""
             )
         }
 
         failure {
             emailext(
+                to: 'vivekbhogade.sit.comp@gmail.com',
                 subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
 Build Failed
@@ -127,11 +136,9 @@ Build Failed
 Job Name: ${env.JOB_NAME}
 Build Number: ${env.BUILD_NUMBER}
 
-Check Console:
+Build URL:
 ${env.BUILD_URL}
-""",
-                to: 'vivekbhogade.sit.comp@gmail.com',
-                mimeType: 'text/plain'
+"""
             )
         }
     }
