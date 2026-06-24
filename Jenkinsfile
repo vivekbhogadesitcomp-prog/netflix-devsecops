@@ -81,17 +81,18 @@ pipeline {
             }
         }
 
-	stage('Kubernetes Test') {
+	stage('Deploy to Kubernetes') {
     steps {
         withCredentials([
-            file(
-                credentialsId: 'kubeconfig',
-                variable: 'KUBECONFIG'
-            )
+            file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')
         ]) {
             sh '''
-            kubectl config current-context
-            kubectl get nodes
+            kubectl set image deployment/netflix-deployment \
+            netflix=$IMAGE_NAME
+
+            kubectl rollout status deployment/netflix-deployment
+
+            kubectl get pods
             '''
         }
     }
